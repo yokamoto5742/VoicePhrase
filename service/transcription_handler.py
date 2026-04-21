@@ -4,7 +4,7 @@ import traceback
 from typing import Any, Callable, List, Optional
 
 from app.ui_queue_processor import UIQueueProcessor
-from external_service.elevenlabs_api import transcribe_audio
+from external_service.google_stt_api import transcribe_audio
 from service.audio_file_manager import AudioFileManager
 from service.text_transformer import process_punctuation
 from utils.app_config import AppConfig

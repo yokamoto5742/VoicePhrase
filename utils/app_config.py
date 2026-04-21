@@ -62,18 +62,14 @@ class AppConfig:
     def paste_delay(self) -> float:
         return get_config_value(self._config, 'CLIPBOARD', 'PASTE_DELAY', 0.3)
 
-    # --- ELEVENLABS ---
+    # --- GOOGLE_STT ---
     @property
-    def elevenlabs_model(self) -> str:
-        return get_config_value(self._config, 'ELEVENLABS', 'MODEL', 'scribe_v2')
+    def google_stt_model(self) -> str:
+        return get_config_value(self._config, 'GOOGLE_STT', 'MODEL', 'chirp_3')
 
     @property
-    def elevenlabs_language(self) -> str:
-        return get_config_value(self._config, 'ELEVENLABS', 'LANGUAGE', 'jpn')
-
-    @property
-    def tag_audio_events(self) -> bool:
-        return get_config_value(self._config, 'ELEVENLABS', 'TAG_AUDIO_EVENTS', False)
+    def google_stt_language(self) -> str:
+        return get_config_value(self._config, 'GOOGLE_STT', 'LANGUAGE', 'ja-JP')
 
     # --- FORMATTING ---
     @property

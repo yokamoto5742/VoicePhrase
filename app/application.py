@@ -5,7 +5,7 @@ from app import __version__
 from app.main_window import VoiceInputManager
 from app.notification_manager import NotificationManager
 from app.ui_queue_processor import UIQueueProcessor
-from external_service.elevenlabs_api import setup_elevenlabs_client
+from external_service.google_stt_api import setup_google_stt_client
 from service.audio_file_manager import AudioFileManager
 from service.audio_recorder import AudioRecorder
 from service.clipboard_manager import ClipboardManager
@@ -30,8 +30,8 @@ class Application:
         logging.info('アプリケーションを開始します')
 
         recorder = AudioRecorder(config)
-        client = setup_elevenlabs_client()
-        logging.info('ElevenLabs APIクライアントを初期化しました')
+        client = setup_google_stt_client()
+        logging.info('Google STT APIクライアントを初期化しました')
 
         replacements = load_replacements(config.replacements_file)
         clipboard_manager = ClipboardManager(config, replacements)

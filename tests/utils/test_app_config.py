@@ -122,22 +122,20 @@ class TestAppConfigRecording:
         assert config.auto_stop_timer == 120
 
 
-class TestAppConfigElevenLabs:
-    """ElevenLabs設定プロパティのテストクラス"""
+class TestAppConfigGoogleStt:
+    """Google STT設定プロパティのテストクラス"""
 
-    def test_elevenlabs_defaults(self):
+    def test_google_stt_defaults(self):
         """正常系: デフォルト値"""
         config = dict_to_app_config({})
-        assert config.elevenlabs_model == 'scribe_v2'
-        assert config.elevenlabs_language == 'jpn'
-        assert config.tag_audio_events is False
+        assert config.google_stt_model == 'chirp_3'
+        assert config.google_stt_language == 'ja-JP'
 
-    def test_elevenlabs_custom(self):
+    def test_google_stt_custom(self):
         """正常系: カスタム値"""
-        config = dict_to_app_config({'ELEVENLABS': {'MODEL': 'custom_model', 'LANGUAGE': 'eng', 'TAG_AUDIO_EVENTS': 'True'}})
-        assert config.elevenlabs_model == 'custom_model'
-        assert config.elevenlabs_language == 'eng'
-        assert config.tag_audio_events is True
+        config = dict_to_app_config({'GOOGLE_STT': {'MODEL': 'chirp_2', 'LANGUAGE': 'en-US'}})
+        assert config.google_stt_model == 'chirp_2'
+        assert config.google_stt_language == 'en-US'
 
 
 class TestAppConfigRawConfig:

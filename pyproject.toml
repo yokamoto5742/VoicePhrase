@@ -3,7 +3,7 @@ name = "voicephrase"
 version = "1.0.0"
 requires-python = ">=3.13"
 dependencies = [
-    "google-cloud-speech",
+    "google-cloud-speech==2.38.0",
     "keyboard==0.13.5",
     "PyAudio==0.2.14",
     "pyperclip==1.9.0",

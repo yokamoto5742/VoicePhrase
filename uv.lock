@@ -3265,7 +3265,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "google-cloud-speech" },
+    { name = "google-cloud-speech", specifier = "==2.38.0" },
     { name = "keyboard", specifier = "==0.13.5" },
     { name = "pyaudio", specifier = "==0.2.14" },
     { name = "pyperclip", specifier = "==1.9.0" },

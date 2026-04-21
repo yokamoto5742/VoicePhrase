@@ -34,7 +34,7 @@ def setup_google_stt_client() -> GoogleSttClient:
     if not project_id:
         raise ValueError('GOOGLE_PROJECT_IDが未設定です')
 
-    location = env_vars.get('GCP_LOCATION', 'global')
+    location = env_vars.get('GOOGLE_LOCATION', 'us-central1')
 
     speech_client = SpeechClient()
     return GoogleSttClient(speech_client=speech_client, project_id=project_id, location=location)

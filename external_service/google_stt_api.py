@@ -4,6 +4,7 @@ import traceback
 from dataclasses import dataclass
 from typing import Optional
 
+from google.api_core.client_options import ClientOptions
 from google.cloud.speech_v2 import SpeechClient
 from google.cloud.speech_v2.types import (
     AutoDetectDecodingConfig,
@@ -34,9 +35,13 @@ def setup_google_stt_client() -> GoogleSttClient:
     if not project_id:
         raise ValueError('GOOGLE_PROJECT_IDが未設定です')
 
-    location = env_vars.get('GOOGLE_LOCATION', 'us-central1')
+    location = env_vars.get('GOOGLE_LOCATION', 'us')
 
-    speech_client = SpeechClient()
+    speech_client = SpeechClient(
+        client_options=ClientOptions(
+            api_endpoint=f'{location}-speech.googleapis.com',
+        )
+    )
     return GoogleSttClient(speech_client=speech_client, project_id=project_id, location=location)
 
 

@@ -8,9 +8,9 @@ def build_executable():
 
     subprocess.run([
         "pyinstaller",
-        "--name=VoiceScribe",
+        "--name=VoicePhrase",
         "--windowed",
-        "--icon=assets/VoiceScribe.ico",
+        "--icon=assets/VoicePhrase.ico",
         "--add-data", ".env:.",
         "--add-data", "utils/config.ini:.",
         "--add-data", "data/replacements.txt:.",

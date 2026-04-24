@@ -26,7 +26,7 @@ python build.py
 
 ## Architecture
 
-VoiceScribe is a Windows desktop app that records microphone input, transcribes it via the ElevenLabs API, and pastes the result into the active window. Entry point: `main.py`.
+VoicePhrase is a Windows desktop app that records microphone input, transcribes it via the ElevenLabs API, and pastes the result into the active window. Entry point: `main.py`.
 
 **Layers (top to bottom):**
 

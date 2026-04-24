@@ -20,9 +20,9 @@ class TestSetupGoogleSttClient:
     def test_setup_client_success(self, mock_load_env, mock_speech_client):
         """正常系: 必要な環境変数が設定されている場合"""
         mock_load_env.return_value = {
-            'GOOGLE_APPLICATION_CREDENTIALS': '/path/to/key.json',
-            'GCP_PROJECT_ID': 'my-project',
-            'GCP_LOCATION': 'us-central1',
+            'GOOGLE_CREDENTIALS_JSON': '/path/to/key.json',
+            'GOOGLE_PROJECT_ID': 'my-project',
+            'GOOGLE_LOCATION': 'us-central1',
         }
         mock_client_instance = Mock()
         mock_speech_client.return_value = mock_client_instance
@@ -37,33 +37,33 @@ class TestSetupGoogleSttClient:
     @patch('external_service.google_stt_api.SpeechClient')
     @patch('external_service.google_stt_api.load_env_variables')
     def test_setup_client_default_location(self, mock_load_env, mock_speech_client):
-        """正常系: GCP_LOCATIONが未設定の場合はglobalを使用"""
+        """正常系: GOOGLE_LOCATIONが未設定の場合はusを使用"""
         mock_load_env.return_value = {
-            'GOOGLE_APPLICATION_CREDENTIALS': '/path/to/key.json',
-            'GCP_PROJECT_ID': 'my-project',
+            'GOOGLE_CREDENTIALS_JSON': '/path/to/key.json',
+            'GOOGLE_PROJECT_ID': 'my-project',
         }
         mock_speech_client.return_value = Mock()
 
         result = setup_google_stt_client()
 
-        assert result.location == 'global'
+        assert result.location == 'us'
 
     @patch('external_service.google_stt_api.load_env_variables')
     def test_setup_client_no_credentials(self, mock_load_env):
-        """異常系: GOOGLE_APPLICATION_CREDENTIALSが未設定"""
-        mock_load_env.return_value = {'GCP_PROJECT_ID': 'my-project'}
+        """異常系: GOOGLE_CREDENTIALS_JSONが未設定"""
+        mock_load_env.return_value = {'GOOGLE_PROJECT_ID': 'my-project'}
 
-        with pytest.raises(ValueError, match='GOOGLE_APPLICATION_CREDENTIALSが未設定です'):
+        with pytest.raises(ValueError, match='GOOGLE_CREDENTIALS_JSONが未設定です'):
             setup_google_stt_client()
 
     @patch('external_service.google_stt_api.load_env_variables')
     def test_setup_client_no_project_id(self, mock_load_env):
-        """異常系: GCP_PROJECT_IDが未設定"""
+        """異常系: GOOGLE_PROJECT_IDが未設定"""
         mock_load_env.return_value = {
-            'GOOGLE_APPLICATION_CREDENTIALS': '/path/to/key.json',
+            'GOOGLE_CREDENTIALS_JSON': '/path/to/key.json',
         }
 
-        with pytest.raises(ValueError, match='GCP_PROJECT_IDが未設定です'):
+        with pytest.raises(ValueError, match='GOOGLE_PROJECT_IDが未設定です'):
             setup_google_stt_client()
 
 

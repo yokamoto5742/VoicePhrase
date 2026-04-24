@@ -10,6 +10,7 @@ def build_executable():
         "--add-data", ".env:.",
         "--add-data", "utils/config.ini:.",
         "--add-data", "data/replacements.txt:.",
+        "--add-data", "data/ophthalmology_phrases.txt:.",
         "main.py"
     ])
 

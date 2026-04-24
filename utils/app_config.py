@@ -71,6 +71,25 @@ class AppConfig:
     def google_stt_language(self) -> str:
         return get_config_value(self._config, 'GOOGLE_STT', 'LANGUAGE', 'ja-JP')
 
+    @property
+    def google_stt_phrase_set_file(self) -> str:
+        """Speech Adaptation 用フレーズセットファイル名。空文字なら無効"""
+        configured = get_config_value(self._config, 'GOOGLE_STT', 'PHRASE_SET_FILE', '')
+        if not configured:
+            return ''
+        if os.path.isabs(configured):
+            return configured
+        return os.path.join(self._default_data_dir(), configured)
+
+    @property
+    def google_stt_phrase_boost(self) -> float:
+        return get_config_value(self._config, 'GOOGLE_STT', 'PHRASE_BOOST', 10.0)
+
+    def _default_data_dir(self) -> str:
+        if getattr(sys, 'frozen', False):
+            return getattr(sys, '_MEIPASS', os.path.dirname(__file__))
+        return os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+
     # --- FORMATTING ---
     @property
     def use_punctuation(self) -> bool:

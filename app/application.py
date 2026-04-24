@@ -30,7 +30,7 @@ class Application:
         logging.info('アプリケーションを開始します')
 
         recorder = AudioRecorder(config)
-        client = setup_google_stt_client()
+        client = setup_google_stt_client(config)
         logging.info('Google STT APIクライアントを初期化しました')
 
         replacements = load_replacements(config.replacements_file)

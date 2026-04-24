@@ -4,7 +4,7 @@ import traceback
 from typing import Any, Callable, List, Optional
 
 from app.ui_queue_processor import UIQueueProcessor
-from external_service.google_stt_api import transcribe_audio
+from external_service.google_stt_api import transcribe_audio, transcribe_pcm
 from service.audio_file_manager import AudioFileManager
 from service.text_transformer import process_punctuation
 from utils.app_config import AppConfig
@@ -29,6 +29,7 @@ class TranscriptionHandler:
         self.cancel_processing = False
         self.processing_thread: Optional[threading.Thread] = None
         self.transcribe_audio_func = transcribe_audio
+        self.transcribe_pcm_func = transcribe_pcm
 
     def transcribe_frames(
             self,
@@ -45,19 +46,22 @@ class TranscriptionHandler:
                 logging.info('処理がキャンセルされました')
                 return
 
-            temp_audio_file = self.audio_file_manager.save_audio(frames, sample_rate)
-            if not temp_audio_file:
-                raise ValueError('音声ファイルの保存に失敗しました')
+            pcm_bytes = b''.join(frames)
+
+            # 保存はアーカイブ用途。失敗しても認識処理は継続
+            self.audio_file_manager.save_audio(frames, sample_rate)
 
             if self.cancel_processing:
                 logging.info('処理がキャンセルされました')
                 return
 
             logging.info('文字起こし開始')
-            transcription = self.transcribe_audio_func(
-                temp_audio_file,
+            transcription = self.transcribe_pcm_func(
+                pcm_bytes,
+                sample_rate,
                 self.config,
-                self.client
+                self.client,
+                self.config.audio_channels,
             )
 
             if not transcription:

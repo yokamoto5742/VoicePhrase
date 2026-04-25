@@ -11,6 +11,7 @@ from google.cloud.speech_v2.types import (
     ExplicitDecodingConfig,
     PhraseSet,
     RecognitionConfig,
+    RecognitionFeatures,
     RecognizeRequest,
     SpeechAdaptation,
 )
@@ -122,6 +123,9 @@ def _build_recognition_config(
         language_codes=config.google_stt_language,
         model=config.google_stt_model,
         adaptation=_build_adaptation(client.phrases, client.boost),
+        features=RecognitionFeatures(
+            enable_automatic_punctuation=config.google_stt_enable_automatic_punctuation,
+        ),
     )
 
 

@@ -88,6 +88,11 @@ class AppConfig:
     def google_stt_phrase_boost(self) -> float:
         return get_config_value(self._config, 'GOOGLE_STT', 'PHRASE_BOOST', 10.0)
 
+    @property
+    def google_stt_enable_automatic_punctuation(self) -> bool:
+        """Google STT に句読点を自動挿入させるか"""
+        return get_config_value(self._config, 'GOOGLE_STT', 'ENABLE_AUTOMATIC_PUNCTUATION', False)
+
     def _default_data_dir(self) -> str:
         if getattr(sys, 'frozen', False):
             return getattr(sys, '_MEIPASS', os.path.dirname(__file__))

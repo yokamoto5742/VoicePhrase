@@ -30,6 +30,7 @@ class AudioRecorder:
         self.frames = []
         try:
             self.p = pyaudio.PyAudio()
+            self._log_input_device_info(self.p)
             self.stream = self.p.open(
                 format=pyaudio.paInt16,
                 channels=self.channels,
@@ -40,6 +41,23 @@ class AudioRecorder:
             self.logger.info('音声入力を開始しました。')
         except Exception as e:
             self.logger.error(f'音声入力の開始中に予期せぬエラーが発生しました: {e}')
+
+    def _log_input_device_info(self, p: pyaudio.PyAudio) -> None:
+        # AGC・音響効果はSTT精度を低下させるため、デバイス情報と無効化推奨を起動時にログ出力
+        try:
+            info = p.get_default_input_device_info()
+            self.logger.info(
+                f'既定入力デバイス: name={info.get("name")}, '
+                f'index={info.get("index")}, '
+                f'defaultSampleRate={info.get("defaultSampleRate")}, '
+                f'maxInputChannels={info.get("maxInputChannels")}'
+            )
+            self.logger.warning(
+                'STT精度向上のため、Windowsのマイクのプロパティで以下を無効化してください: '
+                '自動ゲイン制御(AGC)、ノイズ抑制、音響エコーキャンセル、音声強調(Audio Enhancements)'
+            )
+        except Exception as e:
+            self.logger.warning(f'既定入力デバイス情報の取得に失敗しました: {e}')
 
     def stop_recording(self) -> Tuple[List[bytes], int]:
         self.is_recording = False

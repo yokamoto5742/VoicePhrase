@@ -119,7 +119,7 @@ def _build_recognition_config(
             sample_rate_hertz=sample_rate,
             audio_channel_count=channels,
         ),
-        language_codes=[config.google_stt_language],
+        language_codes=config.google_stt_language,
         model=config.google_stt_model,
         adaptation=_build_adaptation(client.phrases, client.boost),
     )

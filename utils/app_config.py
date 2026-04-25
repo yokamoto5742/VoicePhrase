@@ -68,8 +68,11 @@ class AppConfig:
         return get_config_value(self._config, 'GOOGLE_STT', 'MODEL', 'chirp_3')
 
     @property
-    def google_stt_language(self) -> str:
-        return get_config_value(self._config, 'GOOGLE_STT', 'LANGUAGE', 'ja-JP')
+    def google_stt_language(self) -> list[str]:
+        """認識対象の言語コード一覧。カンマ区切りで複数指定可"""
+        raw = get_config_value(self._config, 'GOOGLE_STT', 'LANGUAGE', 'ja-JP,en-US')
+        codes = [code.strip() for code in str(raw).split(',') if code.strip()]
+        return codes if codes else ['ja-JP', 'en-US']
 
     @property
     def google_stt_phrase_set_file(self) -> str:

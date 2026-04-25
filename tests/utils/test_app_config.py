@@ -129,13 +129,18 @@ class TestAppConfigGoogleStt:
         """正常系: デフォルト値"""
         config = dict_to_app_config({})
         assert config.google_stt_model == 'chirp_3'
-        assert config.google_stt_language == 'ja-JP'
+        assert config.google_stt_language == ['ja-JP', 'en-US']
 
     def test_google_stt_custom(self):
         """正常系: カスタム値"""
         config = dict_to_app_config({'GOOGLE_STT': {'MODEL': 'chirp_2', 'LANGUAGE': 'en-US'}})
         assert config.google_stt_model == 'chirp_2'
-        assert config.google_stt_language == 'en-US'
+        assert config.google_stt_language == ['en-US']
+
+    def test_google_stt_multiple_languages(self):
+        """正常系: カンマ区切りで複数言語"""
+        config = dict_to_app_config({'GOOGLE_STT': {'LANGUAGE': 'ja-JP, en-US'}})
+        assert config.google_stt_language == ['ja-JP', 'en-US']
 
 
 class TestAppConfigRawConfig:

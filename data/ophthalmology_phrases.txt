@@ -1,3 +1,7 @@
 # 眼科用語フレーズセット（Google Cloud STT Speech Adaptation 用）
-# 1行1フレーズ。先頭が # の行と空行は無視される
-# 必要に応じて語彙を追記してください
+# 1行1フレーズで先頭が # の行と空行は無視
+$OOV_CLASS_DIGIT_SEQUENCE
+$OPERAND
+$PERCENT
+$TIME
+硝子体

@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import traceback
@@ -7,6 +8,7 @@ from typing import Optional
 
 from google.api_core.client_options import ClientOptions
 from google.cloud.speech_v2 import SpeechClient
+from google.oauth2 import service_account
 from google.cloud.speech_v2.types import (
     ExplicitDecodingConfig,
     PhraseSet,
@@ -47,13 +49,20 @@ def _load_phrase_set(file_path: str) -> tuple[str, ...]:
         return ()
 
 
+def _load_service_account_credentials(value: str) -> service_account.Credentials:
+    stripped = value.strip()
+    if stripped.startswith('{'):
+        info = json.loads(stripped)
+        return service_account.Credentials.from_service_account_info(info)
+    return service_account.Credentials.from_service_account_file(stripped)
+
+
 def setup_google_stt_client(config: Optional[AppConfig] = None) -> GoogleSttClient:
     env_vars = load_env_variables()
 
-    credentials_path = env_vars.get('GOOGLE_CREDENTIALS_JSON')
-    if not credentials_path:
+    credentials_value = env_vars.get('GOOGLE_CREDENTIALS_JSON')
+    if not credentials_value:
         raise ValueError('GOOGLE_CREDENTIALS_JSONが未設定です')
-    os.environ['GOOGLE_CREDENTIALS_JSON'] = credentials_path
 
     project_id = env_vars.get('GOOGLE_PROJECT_ID')
     if not project_id:
@@ -61,10 +70,15 @@ def setup_google_stt_client(config: Optional[AppConfig] = None) -> GoogleSttClie
 
     location = env_vars.get('GOOGLE_LOCATION', 'us')
 
+    # JSONから直接資格情報をロードしてADCフォールバック(gcloud CLI起動)を回避
+    # ファイルパスとJSON文字列の両方を許容する
+    credentials = _load_service_account_credentials(credentials_value)
+
     speech_client = SpeechClient(
+        credentials=credentials,
         client_options=ClientOptions(
             api_endpoint=f'{location}-speech.googleapis.com',
-        )
+        ),
     )
 
     phrases: tuple[str, ...] = ()

@@ -6,7 +6,6 @@ def build_executable():
         "pyinstaller",
         "--name=VoicePhrase",
         "--windowed",
-        "--hide-console=hide-early",
         "--icon=assets/VoicePhrase.ico",
         "--add-data", ".env:.",
         "--add-data", "utils/config.ini:.",

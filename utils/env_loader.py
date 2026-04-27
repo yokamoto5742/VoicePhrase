@@ -1,21 +1,67 @@
 import os
+import shutil
+import subprocess
 from pathlib import Path
 
+APP_DIR_NAME = 'VoicePhrase'
+ENV_FILE_NAME = '.env'
 
-def load_env_variables() -> dict:
-    base_dir = Path(__file__).parent.parent
-    env_path = os.path.join(base_dir, '.env')
 
-    env_vars = {}
+def _user_env_dir() -> Path:
+    """%APPDATA%\\VoicePhrase\\ を返す。APPDATA未設定時はホーム配下にフォールバック"""
+    appdata = os.environ.get('APPDATA')
+    base = Path(appdata) if appdata else Path.home() / 'AppData' / 'Roaming'
+    return base / APP_DIR_NAME
 
-    if os.path.exists(env_path):
-        with open(env_path, encoding='utf-8') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#') and '=' in line:
-                    key, value = line.split('=', 1)
-                    env_vars[key.strip()] = value.strip().strip('"\'')
-    else:
-        print("警告: .envファイルが見つかりません。")
 
+def _project_env_path() -> Path:
+    return Path(__file__).parent.parent / ENV_FILE_NAME
+
+
+def _resolve_env_path() -> Path:
+    """%APPDATA%配下の .env を優先。無ければ開発用プロジェクト直下を参照"""
+    user_env = _user_env_dir() / ENV_FILE_NAME
+    if user_env.exists():
+        return user_env
+
+    project_env = _project_env_path()
+    if project_env.exists():
+        # 初回起動時に開発用 .env を %APPDATA% にコピーして以降はそちらを使う
+        try:
+            user_env.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(project_env, user_env)
+            return user_env
+        except OSError:
+            return project_env
+
+    return user_env
+
+
+def _open_folder_and_notify(folder: Path) -> None:
+    """フォルダをエクスプローラで開き、ユーザーに .env 配置を促す"""
+    try:
+        folder.mkdir(parents=True, exist_ok=True)
+        subprocess.Popen(['explorer', str(folder)])
+    except OSError:
+        pass
+
+
+def _parse_env_file(path: Path) -> dict[str, str]:
+    env_vars: dict[str, str] = {}
+    with open(path, encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                key, value = line.split('=', 1)
+                env_vars[key.strip()] = value.strip().strip('"\'')
     return env_vars
+
+
+def load_env_variables() -> dict[str, str]:
+    env_path = _resolve_env_path()
+    if not env_path.exists():
+        folder = _user_env_dir()
+        print(f'警告: .envファイルが見つかりません。{folder} に .env を配置してください。')
+        _open_folder_and_notify(folder)
+        return {}
+    return _parse_env_file(env_path)

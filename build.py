@@ -7,7 +7,6 @@ def build_executable():
         "--name=VoicePhrase",
         "--windowed",
         "--icon=assets/VoicePhrase.ico",
-        "--add-data", ".env:.",
         "--add-data", "utils/config.ini:.",
         "--add-data", "data/replacements.txt:.",
         "--add-data", "data/ophthalmology_phrases.txt:.",

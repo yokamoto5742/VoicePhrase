@@ -35,7 +35,7 @@ def load_replacements(replacements_path: str) -> Dict[str, str]:
                 except ValueError:
                     logging.error(f'置換ファイルの{line_number}行目に無効な行があります: {line}')
 
-        logging.info(f'置換辞書の総数: {len(replacements)}')
+        logging.info(f'置換ルールの総数: {len(replacements)}')
 
     except IOError as e:
         logging.error(f'置換ファイルの読み込み中にエラーが発生しました: {e}')

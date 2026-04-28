@@ -35,7 +35,7 @@ class TestAppConfigPaths:
 
     def test_cleanup_minutes_default(self):
         """正常系: デフォルト値"""
-        assert dict_to_app_config({}).cleanup_minutes == 240
+        assert dict_to_app_config({}).cleanup_minutes == 30
 
     def test_replacements_file_configured(self):
         """正常系: 設定ファイルに指定がある場合"""

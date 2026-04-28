@@ -32,7 +32,7 @@ class GoogleSttClient:
 
 
 def _load_phrase_set(file_path: str) -> tuple[str, ...]:
-    """フレーズセットファイルを読み込む"""
+    """専門用語のフレーズセットファイルを読み込む"""
     if not file_path or not os.path.exists(file_path):
         return ()
     try:
@@ -68,7 +68,7 @@ def setup_google_stt_client(config: Optional[AppConfig] = None) -> GoogleSttClie
     if not project_id:
         raise ValueError('GOOGLE_PROJECT_IDが未設定です')
 
-    location = env_vars.get('GOOGLE_LOCATION', 'us')
+    location = env_vars.get('GOOGLE_LOCATION', 'asia-northeast1')
 
     credentials = _load_service_account_credentials(credentials_value)
 
@@ -203,7 +203,7 @@ def transcribe_audio(
         config: AppConfig,
         client: GoogleSttClient
 ) -> Optional[str]:
-    """保存済みWAVファイルを読み込んで文字起こしする(F8再実行用)"""
+    """保存済み音声ファイルを読み込んで文字起こしする"""
     is_valid, error_msg = validate_audio_file(audio_file_path)
     if not is_valid:
         logging.warning(error_msg) if '未指定' in str(error_msg) else logging.error(error_msg)

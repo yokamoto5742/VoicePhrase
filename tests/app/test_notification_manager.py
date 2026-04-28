@@ -366,7 +366,7 @@ class TestDestroyPopup:
         self.manager._destroy_popup()
 
         # Assert
-        assert "ポップアップの破棄中にエラーが発生しました" in caplog.text
+        assert "ポップアップ終了中にエラーが発生しました" in caplog.text
         assert self.manager.current_popup is None
 
 

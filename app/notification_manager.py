@@ -1,6 +1,6 @@
 import logging
 import tkinter as tk
-from typing import Optional
+from typing import Optional, cast
 
 from utils.app_config import AppConfig
 
@@ -58,7 +58,7 @@ class NotificationManager:
     def _update_status_label(self, text: str) -> None:
         status_label = self.master.children.get('status_label')
         if status_label is not None and hasattr(status_label, 'config'):
-            status_label.config(text=text)
+            cast(tk.Label, status_label).config(text=text)
 
     def cleanup(self) -> None:
         if self.current_popup:

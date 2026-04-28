@@ -54,7 +54,7 @@ class TestReplacementsEditorInit:
 
         # Assert
         mock_toplevel.assert_called_once_with(self.mock_parent)
-        mock_window.title.assert_called_once_with('置換単語登録( 置換前 , 置換後 )')
+        mock_window.title.assert_called_once_with('置換辞書登録( 置換前 , 置換後 )')
         mock_window.geometry.assert_called_once_with('500x800')
         mock_load_file.assert_called_once()
         mock_window.transient.assert_called_once_with(self.mock_parent)
@@ -144,7 +144,7 @@ class TestLoadFile:
         ReplacementsEditor(self.mock_parent, dict_to_app_config(self.mock_config))
 
         # Assert
-        assert "置換設定ファイルが見つかりません" in caplog.text
+        assert "ファイルが見つかりません" in caplog.text
         mock_showwarning.assert_called_once()
         call_args = mock_showwarning.call_args
         assert call_args[0][0] == '警告'

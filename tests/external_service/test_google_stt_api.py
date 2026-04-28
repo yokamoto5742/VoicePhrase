@@ -1,4 +1,5 @@
-from unittest.mock import Mock, patch
+from typing import cast
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
@@ -26,14 +27,16 @@ _BASE_CONFIG = {
 class TestSetupGoogleSttClient:
 
     @patch('external_service.google_stt_api.SpeechClient')
+    @patch('external_service.google_stt_api._load_service_account_credentials')
     @patch('external_service.google_stt_api.load_env_variables')
-    def test_setup_client_success(self, mock_load_env, mock_speech_client):
+    def test_setup_client_success(self, mock_load_env, mock_load_creds, mock_speech_client):
         """正常系: 必要な環境変数が設定されている場合"""
         mock_load_env.return_value = {
             'GOOGLE_CREDENTIALS_JSON': '/path/to/key.json',
             'GOOGLE_PROJECT_ID': 'my-project',
             'GOOGLE_LOCATION': 'asia-northeast1',
         }
+        mock_load_creds.return_value = Mock()
         mock_client_instance = Mock()
         mock_speech_client.return_value = mock_client_instance
 
@@ -47,30 +50,34 @@ class TestSetupGoogleSttClient:
         assert result.boost == 0.0
 
     @patch('external_service.google_stt_api.SpeechClient')
+    @patch('external_service.google_stt_api._load_service_account_credentials')
     @patch('external_service.google_stt_api.load_env_variables')
-    def test_setup_client_default_location(self, mock_load_env, mock_speech_client):
+    def test_setup_client_default_location(self, mock_load_env, mock_load_creds, mock_speech_client):
         """正常系: GOOGLE_LOCATIONが未設定の場合はusを使用"""
         mock_load_env.return_value = {
             'GOOGLE_CREDENTIALS_JSON': '/path/to/key.json',
             'GOOGLE_PROJECT_ID': 'my-project',
         }
+        mock_load_creds.return_value = Mock()
         mock_speech_client.return_value = Mock()
 
         result = setup_google_stt_client()
 
-        assert result.location == 'us'
+        assert result.location == 'asia-northeast1'
 
     @patch('external_service.google_stt_api._load_phrase_set')
     @patch('external_service.google_stt_api.SpeechClient')
+    @patch('external_service.google_stt_api._load_service_account_credentials')
     @patch('external_service.google_stt_api.load_env_variables')
     def test_setup_client_with_config_loads_phrases(
-            self, mock_load_env, mock_speech_client, mock_load_phrase
+            self, mock_load_env, mock_load_creds, mock_speech_client, mock_load_phrase
     ):
         """正常系: config指定時はフレーズセットとboostを読み込む"""
         mock_load_env.return_value = {
             'GOOGLE_CREDENTIALS_JSON': '/path/to/key.json',
             'GOOGLE_PROJECT_ID': 'my-project',
         }
+        mock_load_creds.return_value = Mock()
         mock_speech_client.return_value = Mock()
         mock_load_phrase.return_value = ('網膜剥離', '黄斑変性')
 
@@ -207,12 +214,13 @@ class TestTranscribePcm:
         mock_result.alternatives = [mock_alternative]
         mock_response = Mock()
         mock_response.results = [mock_result]
-        self.mock_client.speech_client.recognize.return_value = mock_response
+        speech_client = cast(MagicMock, self.mock_client.speech_client)
+        speech_client.recognize.return_value = mock_response
 
         result = transcribe_pcm(b'pcm_bytes', 16000, self.mock_config, self.mock_client)
 
         assert result == '文字起こし結果'
-        self.mock_client.speech_client.recognize.assert_called_once()
+        speech_client.recognize.assert_called_once()
 
     def test_multiple_results_concatenated(self):
         def _make_result(text: str) -> Mock:
@@ -224,7 +232,8 @@ class TestTranscribePcm:
 
         mock_response = Mock()
         mock_response.results = [_make_result('こんにちは'), _make_result('世界')]
-        self.mock_client.speech_client.recognize.return_value = mock_response
+        speech_client = cast(MagicMock, self.mock_client.speech_client)
+        speech_client.recognize.return_value = mock_response
 
         result = transcribe_pcm(b'pcm', 16000, self.mock_config, self.mock_client)
         assert result == 'こんにちは世界'
@@ -232,7 +241,8 @@ class TestTranscribePcm:
     def test_empty_results_returns_empty_string(self):
         mock_response = Mock()
         mock_response.results = []
-        self.mock_client.speech_client.recognize.return_value = mock_response
+        speech_client = cast(MagicMock, self.mock_client.speech_client)
+        speech_client.recognize.return_value = mock_response
 
         result = transcribe_pcm(b'pcm', 16000, self.mock_config, self.mock_client)
         assert result == ''
@@ -241,21 +251,23 @@ class TestTranscribePcm:
         mock_response = Mock()
         mock_response.results = []
         client = _make_client(project_id='test-proj', location='asia-northeast1')
-        client.speech_client.recognize.return_value = mock_response
+        speech_client = cast(MagicMock, client.speech_client)
+        speech_client.recognize.return_value = mock_response
 
         transcribe_pcm(b'pcm', 16000, self.mock_config, client)
 
-        request = client.speech_client.recognize.call_args.kwargs['request']
+        request = speech_client.recognize.call_args.kwargs['request']
         assert request.recognizer == 'projects/test-proj/locations/asia-northeast1/recognizers/_'
 
     def test_explicit_decoding_config_is_used(self):
         mock_response = Mock()
         mock_response.results = []
-        self.mock_client.speech_client.recognize.return_value = mock_response
+        speech_client = cast(MagicMock, self.mock_client.speech_client)
+        speech_client.recognize.return_value = mock_response
 
         transcribe_pcm(b'pcm', 16000, self.mock_config, self.mock_client, channels=1)
 
-        request = self.mock_client.speech_client.recognize.call_args.kwargs['request']
+        request = speech_client.recognize.call_args.kwargs['request']
         assert request.config.explicit_decoding_config.sample_rate_hertz == 16000
         assert request.config.explicit_decoding_config.audio_channel_count == 1
 
@@ -263,16 +275,18 @@ class TestTranscribePcm:
         mock_response = Mock()
         mock_response.results = []
         client = _make_client(phrases=('網膜剥離',), boost=10.0)
-        client.speech_client.recognize.return_value = mock_response
+        speech_client = cast(MagicMock, client.speech_client)
+        speech_client.recognize.return_value = mock_response
 
         transcribe_pcm(b'pcm', 16000, self.mock_config, client)
 
-        request = client.speech_client.recognize.call_args.kwargs['request']
+        request = speech_client.recognize.call_args.kwargs['request']
         inline = request.config.adaptation.phrase_sets[0].inline_phrase_set
         assert [p.value for p in inline.phrases] == ['網膜剥離']
 
     def test_api_exception_returns_none(self):
-        self.mock_client.speech_client.recognize.side_effect = Exception('API エラー')
+        speech_client = cast(MagicMock, self.mock_client.speech_client)
+        speech_client.recognize.side_effect = Exception('API エラー')
         result = transcribe_pcm(b'pcm', 16000, self.mock_config, self.mock_client)
         assert result is None
 

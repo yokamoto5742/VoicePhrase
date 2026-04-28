@@ -28,6 +28,7 @@ class UIComponents:
         self.record_button: Optional[tk.Button] = None
         self.reload_audio_button: Optional[tk.Button] = None
         self.load_audio_button: Optional[tk.Button] = None
+        self.technical_terms_button: Optional[tk.Button] = None
         self.replace_button: Optional[tk.Button] = None
         self.update_replacements_button: Optional[tk.Button] = None
         self.close_button: Optional[tk.Button] = None
@@ -74,6 +75,14 @@ class UIComponents:
             width=15
         )
         self.load_audio_button.pack(pady=5)
+
+        self.technical_terms_button = tk.Button(
+            self.master,
+            text='専門用語登録',
+            command=self.open_technical_terms_editor,
+            width=15
+        )
+        self.technical_terms_button.pack(pady=5)
 
         self.replace_button = tk.Button(
             self.master,
@@ -158,6 +167,14 @@ class UIComponents:
 
     def open_replacements_editor(self) -> None:
         ReplacementsEditor(self.master, self.config)
+
+    def open_technical_terms_editor(self) -> None:
+        ReplacementsEditor(
+            self.master,
+            self.config,
+            file_path=self.config.google_stt_phrase_set_file,
+            title='専門用語登録（1行1語）',
+        )
 
     def update_from_backup(self) -> None:
         """バックアップから置換辞書を更新する"""

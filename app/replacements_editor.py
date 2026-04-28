@@ -3,15 +3,24 @@ import os
 import shutil
 import tkinter as tk
 from tkinter import messagebox, ttk
+from typing import Optional
 
 from utils.app_config import AppConfig
 
 
 class ReplacementsEditor:
-    def __init__(self, parent: tk.Tk, config: AppConfig):
+    def __init__(
+            self,
+            parent: tk.Tk,
+            config: AppConfig,
+            file_path: Optional[str] = None,
+            title: Optional[str] = None,
+    ):
         self.config = config
+        self._file_path = file_path or config.replacements_file
+        self._enable_backup = file_path is None
         self.window = tk.Toplevel(parent)
-        self.window.title('置換辞書登録( 置換前 , 置換後 )')
+        self.window.title(title or '置換辞書登録( 置換前 , 置換後 )')
         self.window.geometry(f'{config.editor_width}x{config.editor_height}')
 
         self.text_area = tk.Text(
@@ -42,33 +51,32 @@ class ReplacementsEditor:
         self.window.grab_set()
 
     def load_file(self) -> None:
-        replacements_path = self.config.replacements_file
-
         try:
-            if os.path.exists(replacements_path):
-                with open(replacements_path, encoding='utf-8') as f:
+            if os.path.exists(self._file_path):
+                with open(self._file_path, encoding='utf-8') as f:
                     self.text_area.insert('1.0', f.read())
             else:
-                logging.warning(f'置換設定ファイルが見つかりません: {replacements_path}')
+                logging.warning(f'ファイルが見つかりません: {self._file_path}')
                 messagebox.showwarning(
                     '警告',
-                    f'ファイルが見つかりません。新規作成します：\n{replacements_path}'
+                    f'ファイルが見つかりません。新規作成します：\n{self._file_path}'
                 )
         except Exception as e:
             logging.error(f'ファイルの読み込みに失敗しました: {str(e)}')
             messagebox.showerror('エラー', f'ファイルの読み込みに失敗しました：\n{str(e)}')
 
     def save_file(self) -> None:
-        replacements_path = self.config.replacements_file
-
         try:
-            os.makedirs(os.path.dirname(replacements_path), exist_ok=True)
+            dir_path = os.path.dirname(self._file_path)
+            if dir_path:
+                os.makedirs(dir_path, exist_ok=True)
 
             content = self.text_area.get('1.0', 'end-1c')
-            with open(replacements_path, 'w', encoding='utf-8') as f:
+            with open(self._file_path, 'w', encoding='utf-8') as f:
                 f.write(content)
 
-            self._copy_to_backup(replacements_path)
+            if self._enable_backup:
+                self._copy_to_backup(self._file_path)
 
             messagebox.showinfo('保存完了', 'ファイルを保存しました')
             self.window.destroy()

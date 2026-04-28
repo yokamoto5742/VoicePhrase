@@ -9,7 +9,7 @@ def build_executable():
         "--icon=assets/VoicePhrase.ico",
         "--add-data", "utils/config.ini:.",
         "--add-data", "data/replacements.txt:.",
-        "--add-data", "data/ophthalmology_phrases.txt:.",
+        "--add-data", "data/technical_terms.txt:.",
         "main.py"
     ])
 

@@ -1,7 +1,8 @@
-# 眼科用語フレーズセット（Google Cloud STT Speech Adaptation 用）
+# 専門用語フレーズセット（Google Cloud STT Speech Adaptation 用）
 # 1行1フレーズで先頭が # の行と空行は無視
 $OOV_CLASS_DIGIT_SEQUENCE
 $OPERAND
 $PERCENT
 $TIME
 硝子体
+PEA+IOL

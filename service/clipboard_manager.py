@@ -6,7 +6,7 @@ from typing import Dict
 import pyperclip
 
 from service.paste_backend import is_paste_available, safe_clipboard_copy, safe_paste_text
-from service.text_transformer import replace_text
+from service.text_transformer import remove_ja_en_spaces, replace_text
 from utils.app_config import AppConfig
 
 
@@ -52,7 +52,7 @@ class ClipboardManager:
         try:
             logging.debug('_paste_in_thread開始')
 
-            replaced_text = replace_text(text, self._replacements)
+            replaced_text = remove_ja_en_spaces(replace_text(text, self._replacements))
             if not replaced_text:
                 logging.error('テキスト置換結果が空です')
                 return

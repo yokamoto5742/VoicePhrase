@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import Dict
 
 
@@ -45,6 +46,13 @@ def load_replacements(replacements_path: str) -> Dict[str, str]:
         return {}
 
     return replacements
+
+
+def remove_ja_en_spaces(text: str) -> str:
+    """日本語文字と英数字の間の半角スペースを除去する"""
+    text = re.sub(r'([぀-鿿＀-￯])\s+([A-Za-z0-9])', r'\1\2', text)
+    text = re.sub(r'([A-Za-z0-9])\s+([぀-鿿＀-￯])', r'\1\2', text)
+    return text
 
 
 def replace_text(text: str, replacements: Dict[str, str]) -> str:

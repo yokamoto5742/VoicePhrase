@@ -4,12 +4,10 @@ import traceback
 from app import __version__
 from app.application import Application
 from app.error_handler import show_error_dialog, write_error_report
-from utils.process_setup import setup_process
 
 
 def main():
     app = Application()
-    setup_process(app.close)
 
     try:
         app.run()

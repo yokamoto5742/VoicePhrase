@@ -18,14 +18,12 @@ def _project_env_path() -> Path:
 
 
 def _resolve_env_path() -> Path:
-    """%APPDATA%配下の .env を優先し、なければ開発用プロジェクト直下を参照"""
     user_env = _user_env_dir() / ENV_FILE_NAME
     if user_env.exists():
         return user_env
 
     project_env = _project_env_path()
     if project_env.exists():
-        # 初回起動時に開発用 .env を %APPDATA% にコピーして以降はそちらを使う
         try:
             user_env.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(project_env, user_env)
@@ -37,7 +35,6 @@ def _resolve_env_path() -> Path:
 
 
 def _open_folder_and_notify(folder: Path) -> None:
-    """フォルダをエクスプローラで開いてユーザーに .env 配置を促す"""
     try:
         folder.mkdir(parents=True, exist_ok=True)
         subprocess.Popen(['explorer', str(folder)])

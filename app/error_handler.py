@@ -8,7 +8,7 @@ from tkinter import messagebox
 def show_error_dialog(message: str, title: str = 'エラー') -> None:
     try:
         try:
-            root = tk.Misc._default_root  # type: ignore[attr-defined]
+            root = tk.Misc._default_root
             if root:
                 root.withdraw()
         except Exception:

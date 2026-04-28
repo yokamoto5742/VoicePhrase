@@ -11,7 +11,7 @@ class ReplacementsEditor:
     def __init__(self, parent: tk.Tk, config: AppConfig):
         self.config = config
         self.window = tk.Toplevel(parent)
-        self.window.title('置換単語登録( 置換前 , 置換後 )')
+        self.window.title('置換辞書登録( 置換前 , 置換後 )')
         self.window.geometry(f'{config.editor_width}x{config.editor_height}')
 
         self.text_area = tk.Text(
@@ -78,7 +78,7 @@ class ReplacementsEditor:
             messagebox.showerror('エラー', f'ファイルの保存に失敗しました：\n{str(e)}')
 
     def _copy_to_backup(self, source_path: str) -> None:
-        """保存後にbackupパスへコピー (backupパスが無効な場合は何もしない)"""
+        """保存後にbackupパスへコピー"""
         backup_path = self.config.replacements_backup
         if not backup_path:
             return

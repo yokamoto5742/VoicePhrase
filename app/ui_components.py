@@ -77,7 +77,7 @@ class UIComponents:
 
         self.replace_button = tk.Button(
             self.master,
-            text='置換単語登録',
+            text='置換辞書登録',
             command=self.open_replacements_editor,
             width=15
         )
@@ -142,7 +142,7 @@ class UIComponents:
                 return None
             return max(files, key=os.path.getmtime)
         except Exception as e:
-            logging.error(f'最新の音声ファイル取得中にエラー: {str(e)}')
+            logging.error(f'直近の音声ファイル取得中にエラー: {str(e)}')
             return None
 
     def open_audio_file(self) -> None:

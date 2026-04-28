@@ -51,14 +51,14 @@ class NotificationManager:
         except tk.TclError:
             pass
         except Exception as e:
-            logging.error(f'ポップアップの破棄中にエラーが発生しました: {str(e)}')
+            logging.error(f'ポップアップ終了中にエラーが発生しました: {str(e)}')
         finally:
             self.current_popup = None
 
     def _update_status_label(self, text: str) -> None:
         status_label = self.master.children.get('status_label')
         if status_label is not None and hasattr(status_label, 'config'):
-            status_label.config(text=text)  # type: ignore[union-attr]
+            status_label.config(text=text)
 
     def cleanup(self) -> None:
         if self.current_popup:

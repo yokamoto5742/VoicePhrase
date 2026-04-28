@@ -13,18 +13,15 @@ def minify_json_file(input_path, output_path=None):
         output_path (str, optional): 出力ファイルのパス。Noneの場合は入力ファイルを上書き
     """
     try:
-        # JSONファイルを読み込み
         with open(input_path, encoding='utf-8') as file:
             data = json.load(file)
 
         # JSONを一行にまとめる（separatorsでスペースを削除）
         minified_json = json.dumps(data, separators=(',', ':'), ensure_ascii=False)
 
-        # 出力パスが指定されていない場合は入力ファイルを上書き
         if output_path is None:
             output_path = input_path
 
-        # ファイルに保存
         with open(output_path, 'w', encoding='utf-8') as file:
             file.write(minified_json)
 
@@ -53,13 +50,11 @@ def get_file_path_interactive():
             print("ファイルパスが入力されていません。もう一度入力してください。")
             continue
 
-        # ファイル拡張子のチェック
         if not input_path.lower().endswith('.json'):
             print("警告: ファイル拡張子が .json ではありません。続行しますか？ (y/n): ", end="")
             if input().strip().lower() not in ['y', 'yes', 'はい']:
                 continue
 
-        # ファイルの存在確認
         if not Path(input_path).exists():
             print(f"エラー: ファイル '{input_path}' が見つかりません。もう一度入力してください。")
             continue
@@ -68,7 +63,6 @@ def get_file_path_interactive():
 
 
 def get_output_path_interactive(input_path):
-    """対話的に出力パスを取得する関数"""
     print(f"\n出力先の設定:")
     print("1. 入力ファイルを上書きする")
     print("2. 別のファイルに出力する")
@@ -85,7 +79,6 @@ def get_output_path_interactive(input_path):
                     print("ファイルパスが入力されていません。もう一度入力してください。")
                     continue
 
-                # 出力ファイルが既に存在する場合の確認
                 if Path(output_path).exists():
                     print(f"ファイル '{output_path}' は既に存在します。上書きしますか？ (y/n): ", end="")
                     if input().strip().lower() not in ['y', 'yes', 'はい']:
@@ -97,7 +90,6 @@ def get_output_path_interactive(input_path):
 
 
 def main():
-    """メイン関数"""
     parser = argparse.ArgumentParser(
         description="JSONファイルを一行にまとめるスクリプト",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -123,18 +115,14 @@ def main():
 
     args = parser.parse_args()
 
-    # 入力ファイルパスの取得
     if args.input_file:
-        # コマンドライン引数で指定された場合
         input_path = args.input_file
         output_path = args.output
 
-        # 入力ファイルの存在確認
         if not Path(input_path).exists():
             print(f"エラー: ファイル '{input_path}' が見つかりません", file=sys.stderr)
             sys.exit(1)
     else:
-        # 対話的にファイルパスを取得
         print("=== JSONファイルMinifyツール ===")
         input_path = get_file_path_interactive()
         output_path = get_output_path_interactive(input_path)

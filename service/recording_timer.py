@@ -30,7 +30,7 @@ class RecordingTimer:
         self._five_second_notification_shown: bool = False
 
     def start(self) -> None:
-        """タイマーを開始する"""
+        """タイマーを開始"""
         auto_stop_timer = self.config.auto_stop_timer
         self._recording_timer = threading.Timer(auto_stop_timer, self._auto_stop_triggered)
         self._recording_timer.start()
@@ -43,7 +43,7 @@ class RecordingTimer:
             )
 
     def cancel(self) -> None:
-        """タイマーをキャンセルする"""
+        """タイマーをキャンセル"""
         if self._recording_timer and self._recording_timer.is_alive():
             self._recording_timer.cancel()
 
@@ -80,5 +80,5 @@ class RecordingTimer:
             logging.error(f'通知表示中にエラー: {str(e)}')
 
     def cleanup(self) -> None:
-        """リソースをクリーンアップする"""
+        """リソースをクリーンアップ"""
         self.cancel()

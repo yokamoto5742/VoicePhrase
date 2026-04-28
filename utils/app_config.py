@@ -6,7 +6,7 @@ from utils.config_manager import get_config_value
 
 
 class AppConfig:
-    """設定ファイルへの型安全なアクセスを提供するファサード"""
+    """設定ファイルへの型安全なアクセスを提供するファサード(窓口)"""
 
     def __init__(self, config: configparser.ConfigParser):
         self._config = config
@@ -36,7 +36,7 @@ class AppConfig:
 
     @property
     def cleanup_minutes(self) -> int:
-        return get_config_value(self._config, 'PATHS', 'CLEANUP_MINUTES', 240)
+        return get_config_value(self._config, 'PATHS', 'CLEANUP_MINUTES', 30)
 
     @property
     def replacements_file(self) -> str:
@@ -76,7 +76,7 @@ class AppConfig:
 
     @property
     def google_stt_phrase_set_file(self) -> str:
-        """Speech Adaptation 用フレーズセットファイル名。空文字なら無効"""
+        """専門用語ファイル名。空文字なら無効"""
         configured = get_config_value(self._config, 'GOOGLE_STT', 'PHRASE_SET_FILE', '')
         if not configured:
             return ''

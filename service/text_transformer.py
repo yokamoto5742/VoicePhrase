@@ -18,9 +18,9 @@ def process_punctuation(text: str, use_punctuation: bool) -> str:
 
 
 def load_replacements(replacements_path: str) -> Dict[str, str]:
-    """置換ルールファイルを読み込む"""
+    """置換辞書ファイルを読み込む"""
     replacements: Dict[str, str] = {}
-    logging.info(f'置換ルールファイルのパス: {replacements_path}')
+    logging.info(f'置換辞書ファイルのパス: {replacements_path}')
 
     try:
         with open(replacements_path, encoding='utf-8') as f:
@@ -31,11 +31,11 @@ def load_replacements(replacements_path: str) -> Dict[str, str]:
                 try:
                     old, new = line.split(',')
                     replacements[old.strip()] = new.strip()
-                    logging.debug(f'置換ルール読み込み - {line_number}行目: \'{old.strip()}\' → \'{new.strip()}\'')
+                    logging.debug(f'置換辞書読み込み - {line_number}行目: \'{old.strip()}\' → \'{new.strip()}\'')
                 except ValueError:
                     logging.error(f'置換ファイルの{line_number}行目に無効な行があります: {line}')
 
-        logging.info(f'置換ルールの総数: {len(replacements)}')
+        logging.info(f'置換辞書の総数: {len(replacements)}')
 
     except IOError as e:
         logging.error(f'置換ファイルの読み込み中にエラーが発生しました: {e}')
@@ -48,13 +48,13 @@ def load_replacements(replacements_path: str) -> Dict[str, str]:
 
 
 def replace_text(text: str, replacements: Dict[str, str]) -> str:
-    """置換ルールに従ってテキストを変換する"""
+    """置換辞書に従ってテキストを変換する"""
     if not text:
         logging.error('入力テキストが空です')
         return ''
 
     if not replacements:
-        logging.warning('置換ルールが空です')
+        logging.warning('置換辞書が空です')
         return text
 
     try:

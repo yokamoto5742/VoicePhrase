@@ -8,7 +8,6 @@ ENV_FILE_NAME = '.env'
 
 
 def _user_env_dir() -> Path:
-    """%APPDATA%\\VoicePhrase\\ を返す。APPDATA未設定時はホーム配下にフォールバック"""
     appdata = os.environ.get('APPDATA')
     base = Path(appdata) if appdata else Path.home() / 'AppData' / 'Roaming'
     return base / APP_DIR_NAME
@@ -19,7 +18,7 @@ def _project_env_path() -> Path:
 
 
 def _resolve_env_path() -> Path:
-    """%APPDATA%配下の .env を優先。無ければ開発用プロジェクト直下を参照"""
+    """%APPDATA%配下の .env を優先し、なければ開発用プロジェクト直下を参照"""
     user_env = _user_env_dir() / ENV_FILE_NAME
     if user_env.exists():
         return user_env
@@ -38,7 +37,7 @@ def _resolve_env_path() -> Path:
 
 
 def _open_folder_and_notify(folder: Path) -> None:
-    """フォルダをエクスプローラで開き、ユーザーに .env 配置を促す"""
+    """フォルダをエクスプローラで開いてユーザーに .env 配置を促す"""
     try:
         folder.mkdir(parents=True, exist_ok=True)
         subprocess.Popen(['explorer', str(folder)])

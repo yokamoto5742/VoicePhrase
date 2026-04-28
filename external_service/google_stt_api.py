@@ -32,7 +32,7 @@ class GoogleSttClient:
 
 
 def _load_phrase_set(file_path: str) -> tuple[str, ...]:
-    """フレーズセットファイルを読み込む。先頭 # 行と空行は除外"""
+    """フレーズセットファイルを読み込む"""
     if not file_path or not os.path.exists(file_path):
         return ()
     try:
@@ -70,8 +70,6 @@ def setup_google_stt_client(config: Optional[AppConfig] = None) -> GoogleSttClie
 
     location = env_vars.get('GOOGLE_LOCATION', 'us')
 
-    # JSONから直接資格情報をロードしてADCフォールバック(gcloud CLI起動)を回避
-    # ファイルパスとJSON文字列の両方を許容する
     credentials = _load_service_account_credentials(credentials_value)
 
     speech_client = SpeechClient(

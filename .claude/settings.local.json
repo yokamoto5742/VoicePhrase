@@ -14,9 +14,7 @@
       "Bash(claude config get hooks)",
       "Bash(dir:*)",
       "Bash(python -m pytest tests/ -v --tb=short --disable-warnings)",
-      "Bash(sudo:*)",
-      "Bash(rm:*)",
-      "Bash(rm -rf:*)",
+      "Bash(rm:*)"
     ],
     "deny": [
       "Bash(git push:*)",
@@ -37,7 +35,7 @@
       "Bash(nc:*)",
       "Bash(npm uninstall:*)",
       "Bash(npm remove:*)",
-      "Bash(psql:*)",
+      "Bash(psql:*)"
     ],
     "ask": []
   },

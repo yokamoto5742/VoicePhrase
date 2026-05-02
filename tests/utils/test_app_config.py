@@ -38,9 +38,16 @@ class TestAppConfigPaths:
         assert dict_to_app_config({}).cleanup_minutes == 30
 
     def test_replacements_file_configured(self):
-        """正常系: 設定ファイルに指定がある場合"""
-        config = dict_to_app_config({'PATHS': {'REPLACEMENTS_FILE': '/custom/replacements.txt'}})
-        assert config.replacements_file == '/custom/replacements.txt'
+        """正常系: 絶対パスはそのまま返す"""
+        config = dict_to_app_config({'PATHS': {'REPLACEMENTS_FILE': 'C:/custom/replacements.txt'}})
+        assert config.replacements_file == 'C:/custom/replacements.txt'
+
+    def test_replacements_file_relative(self):
+        """正常系: 相対パスはdataディレクトリから解決される"""
+        config = dict_to_app_config({'PATHS': {'REPLACEMENTS_FILE': 'replacements.txt'}})
+        path = config.replacements_file
+        assert path.endswith('replacements.txt')
+        assert 'data' in path
 
     def test_replacements_file_default_dev(self):
         """正常系: 未設定時はdata/replacements.txtを返す"""

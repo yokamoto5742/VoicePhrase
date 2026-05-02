@@ -40,11 +40,13 @@ class AppConfig:
 
     @property
     def replacements_file(self) -> str:
-        """置換ルールファイルのパスを返す。未設定時はデフォルトパスを返す"""
+        """置換ルールファイルのパスを返す。相対パスはdataディレクトリから解決"""
         configured = get_config_value(self._config, 'PATHS', 'REPLACEMENTS_FILE', '')
-        if configured:
+        if not configured:
+            return self._default_replacements_path()
+        if os.path.isabs(configured):
             return configured
-        return self._default_replacements_path()
+        return os.path.join(self._default_data_dir(), configured)
 
     @property
     def replacements_backup(self) -> str:

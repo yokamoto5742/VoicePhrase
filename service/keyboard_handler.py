@@ -8,7 +8,7 @@ from utils.app_config import AppConfig
 
 
 def _to_pynput_hotkey(key_str: str) -> str:
-    """設定値の表記(例: 'pause', 'ctrl+alt+v')を pynput 形式に変換する"""
+    """設定値の表記をpynput形式に変換"""
     parts = [p.strip().lower() for p in key_str.split("+") if p.strip()]
     return "+".join(p if len(p) == 1 else f"<{p}>" for p in parts)
 

@@ -48,10 +48,6 @@ class AppConfig:
             return configured
         return os.path.join(self._default_data_dir(), configured)
 
-    @property
-    def replacements_backup(self) -> str:
-        return get_config_value(self._config, 'PATHS', 'REPLACEMENTS_BACKUP', '')
-
     def _default_replacements_path(self) -> str:
         if getattr(sys, 'frozen', False):
             base_path = getattr(sys, '_MEIPASS', os.path.dirname(__file__))

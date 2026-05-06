@@ -69,6 +69,32 @@ VoicePhrase はこれらを次の組み合わせで解決します。
 
 <div align="right"><a href="#目次">▲ 目次へ戻る</a></div>
 
+## 専門用語登録機能
+
+`data/technical_terms.txt` に専門用語を登録すると、Google Cloud Speech-to-Text API にフレーズヒントとして送信され、認識精度が向上します。
+
+### 登録方法
+
+`data/technical_terms.txt` に 1 行 1 フレーズで登録します。
+
+```
+$OOV_CLASS_DIGIT_SEQUENCE
+$OPERAND
+加齢黄斑変性
+```
+
+- **クラストークン** (`$OOV_CLASS_*`) — Google STT API の特殊トークン。数字列や演算子など、クラスベースの認識ヒント
+- **テキストフレーズ** — 医療用語や業界用語など、固有の専門用語
+
+### 実装動作
+
+アプリケーション起動時に `data/technical_terms.txt` を読み込み、STT API へ `speech_recognition_hints` として設定されます。これにより以下のような効果が期待できます。
+
+- 医療系の専門用語（「加齢黄斑変性」など）の誤認識を削減
+- 部署名や業務用語の正確な認識
+
+<div align="right"><a href="#目次">▲ 目次へ戻る</a></div>
+
 ---
 
 ## 置換ルールのサンプル
@@ -120,7 +146,21 @@ source .venv/bin/activate
 
 ### 3. Google Cloud API キーを設定
 
-プロジェクトルートに `.env` を作成します。
+`.env` の`GOOGLE_CREDENTIALS_JSON` の値には、Google Cloud Console からダウンロードしたサービスアカウントキーの JSON を**1 行に変換した文字列**が必要です。
+
+#### 3-1. サービスアカウントキーを 1 行に変換
+
+Google Cloud Console からダウンロードした JSON ファイルには改行が含まれているため、`scripts/json_minifier.py` を使って 1 行に変換します。
+
+```bash
+python scripts/json_minifier.py
+```
+
+実行するとファイル選択ダイアログが開きます。Google Cloud のサービスアカウントキー JSON ファイルを選択してください。
+
+スクリプトは変換後の 1 行 JSON をタイムスタンプ付きで出力ファイル（例: `credentials_20240430_123456.json`）に保存します。出力ファイル内の JSON 文字列をコピーしてください。
+
+#### 3-2. .env ファイルを作成
 
 ```
 GOOGLE_PROJECT_ID=my-awesome-app-123456

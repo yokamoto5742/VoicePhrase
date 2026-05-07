@@ -1,16 +1,24 @@
+import configparser
 import os
 import shutil
 import subprocess
 from pathlib import Path
 
-APP_DIR_NAME = 'VoicePhrase'
 ENV_FILE_NAME = '.env'
+
+
+def _get_app_dir_name() -> str:
+    config = configparser.ConfigParser()
+    config_path = Path(__file__).parent / 'config.ini'
+    with open(config_path, encoding='utf-8') as f:
+        config.read_file(f)
+    return config.get('LOGGING', 'project_name')
 
 
 def _user_env_dir() -> Path:
     appdata = os.environ.get('APPDATA')
     base = Path(appdata) if appdata else Path.home() / 'AppData' / 'Roaming'
-    return base / APP_DIR_NAME
+    return base / _get_app_dir_name()
 
 
 def _project_env_path() -> Path:

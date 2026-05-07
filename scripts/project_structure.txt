@@ -1,7 +1,7 @@
 ============================================================
 プロジェクト構造: VoicePhrase
 パス: C:\Users\yokam\PycharmProjects\VoicePhrase
-生成日時: 2026-05-06 18:24:40
+生成日時: 2026-05-07 12:59:40
 ============================================================
 
 └── VoicePhrase
@@ -35,6 +35,7 @@
     │   ├── config.ini
     │   ├── app_config.py
     │   ├── config_manager.py
+    │   ├── env_loader.py
     │   └── log_rotation.py
     ├── pyproject.toml
     ├── build.py
